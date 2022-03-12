@@ -1,0 +1,17 @@
+version: '3.7'
+
+networks:
+  mongo:
+    name: mongo
+    attachable: true
+
+services:
+  db:
+    image: bitnami/mongodb:latest
+    container_name: fastify-db
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+    - 27017:27017
+

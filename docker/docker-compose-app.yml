@@ -1,0 +1,38 @@
+version: '3.4'
+
+networks:
+  app-tier:
+    name: app-tier
+    attachable: true
+
+services:
+  db:
+    image: bitnami/mongodb:latest
+    container_name: myapp-db
+    restart: always
+    networks:
+      - app-tier
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - 27017:27017
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myapp
+    networks:
+      - app-tier
+    environment:
+      - APPLICATION_PORT=${APPLICATION_PORT}
+      - APPLICATION_URL=${APPLICATION_URL}
+      - DATABASE_CONNECTION=${DATABASE_URL}
+      - DATABASE_SSL=${DATABASE_SSL}
+      - FOREST_AUTH_SECRET=${FOREST_AUTH_SECRET}
+      - FOREST_ENV_SECRET=${FOREST_ENV_SECRET}
+    ports:
+      - "${APPLICATION_PORT}:${APPLICATION_PORT}"
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
